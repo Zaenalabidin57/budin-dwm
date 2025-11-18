@@ -180,6 +180,7 @@ static void focus(Client *c);
 static void focusin(XEvent *e);
 static void focusmon(const Arg *arg);
 static void focusstack(const Arg *arg);
+static void togglewarp(const Arg *arg);
 static Atom getatomprop(Client *c, Atom prop);
 static int getrootptr(int *x, int *y);
 static long getstate(Window w);
@@ -278,6 +279,7 @@ static void (*handler[LASTEvent]) (XEvent *) = {
 };
 static Atom wmatom[WMLast], netatom[NetLast];
 static int running = 1;
+static int cursorwarp = 1; /* 0 = no warping, 1 = warping enabled */
 static Cur *cursor[CurLast];
 static Clr **scheme;
 static Display *dpy;
@@ -928,6 +930,14 @@ focusmon(const Arg *arg)
 	unfocus(selmon->sel, 0);
 	selmon = m;
 	focus(NULL);
+	if (selmon->sel && cursorwarp)
+		XWarpPointer(dpy, None, selmon->sel->win, 0, 0, 0, 0, selmon->sel->w/2, selmon->sel->h/2);
+}
+
+void
+togglewarp(const Arg *arg)
+{
+	cursorwarp = !cursorwarp;
 }
 
 void
@@ -953,6 +963,8 @@ focusstack(const Arg *arg)
 	if (c) {
 		focus(c);
 		restack(selmon);
+		if (cursorwarp)
+			XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, c->w/2, c->h/2);
 	}
 }
 
@@ -1182,6 +1194,8 @@ manage(Window w, XWindowAttributes *wa)
 	c->mon->sel = c;
 	arrange(c->mon);
 	XMapWindow(dpy, c->win);
+	if (c && c->mon == selmon && cursorwarp)
+		XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, c->w/2, c->h/2);
 	if (term)
 		swallow(term, c);
 	focus(NULL);
@@ -1938,6 +1952,9 @@ unmanage(Client *c, int destroyed)
 		arrange(m);
 		focus(NULL);
 		updateclientlist();
+		if (m == selmon && m->sel && cursorwarp)
+			XWarpPointer(dpy, None, m->sel->win, 0, 0, 0, 0,
+			             m->sel->w/2, m->sel->h/2);
 	}
 }
 
