@@ -1,7 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static const unsigned int borderpx  = 3;        /* border pixel of windows */
+static const unsigned int borderpx  = 5;        /* border pixel of windows */
 static const unsigned int snap      = 12;       /* snap pixel */
 static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayonleft = 0;    /* 0: systray in the right corner, >0: systray on left of status text */
@@ -18,10 +18,13 @@ static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
 static const char col_cyan[]        = "#3e4863";
+static const char col_red[]         = "#82131a";
+
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
-	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
+	//[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
+	[SchemeSel]  = { col_gray4, col_cyan,  col_red  },
 };
 
 #include <X11/XF86keysym.h>
@@ -50,7 +53,7 @@ static const Rule rules[] = {
 	{ "Gimp",    NULL,     NULL,           0,         1,          0,           0,        -1 },
 	{ "Firefox", NULL,     NULL,           1 << 8,    0,          0,          -1,        -1 },
 	{ "St",      NULL,     NULL,           0,         0,          1,           0,        -1 },
-	{ "btop-monitor",      NULL,     NULL,           0,         1,          1,           0,        -1 },
+	{ "St",      NULL,     "btop-monitor",           0,         1,          1,           0,        -1 },
 	{ NULL,      NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
 	//{ NULL,      NULL,     "*.exe",         0,         1,          0,           0,        -1 }, /* Wine applications */
 };
@@ -91,6 +94,7 @@ static const Key keys[] = {
 	{ MODKEY,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_o,      spawn,          SHCMD("qutebrowser") },
 	{ MODKEY,                       XK_n,      spawn,          SHCMD("st -e yazi") },
+	{ Mod1Mask|ShiftMask,                       XK_Escape,      spawn,          SHCMD("st -e btop -T btop-monitor") },
 	{ MODKEY|ShiftMask,                       XK_P,      spawn,          SHCMD("slock") },
 	{ MODKEY,                       XK_y,      spawn,          SHCMD("clipcat-menu") },
 	{ MODKEY,                       XK_p,      togglebar,      {0} },
@@ -104,6 +108,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	//{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
 	{ MODKEY|ShiftMask,             XK_r,      togglewarp,     {0} },
+	{ MODKEY|Mod1Mask,             XK_r,      spawn,     SHCMD("quick-record") },
 	{ MODKEY|ShiftMask,             XK_e,      spawn,     SHCMD("st -e /home/shigure/exit.sh") },
 	{ Mod1Mask,                       XK_Tab,      spawn,           SHCMD("switch") },
 	{ MODKEY,             XK_q,      killclient,     {0} },
